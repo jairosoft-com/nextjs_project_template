@@ -14,6 +14,7 @@ Hi Claude! I need your help creating a complete, production-ready Next.js projec
 - Playwright
 - Husky
 - Lint-Staged
+- Vitest
 - Use App Router
 - Use Turbopack for `next dev`
 
@@ -157,3 +158,4 @@ I need this to be immediately runnable with minimal setup required. All code sho
 ## Final Instructions
 
 💡 After you acknowledge this request, I'll ask for the files one by one to ensure completeness.
+- No do not initialize git on the new folder
