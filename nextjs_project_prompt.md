@@ -16,6 +16,8 @@ echo "Y" | npx create-next-app@latest \<your-project-name\> --typescript --eslin
       --app --import-alias "@/*"
 ```
 
+* Change directory to the project:
+
 ```bash
 cd \<your-project-name\>
 ```
@@ -29,6 +31,84 @@ git init
 ```
 
 * Create a `.gitignore` file targetted for Next.js, React, Javascript project.
+
+```bash
+touch .gitignore
+```
+
+* Add content to the `.gitignore` file:
+
+```text
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# vitest
+/coverage
+*.log
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+```
 
 ## 3. TypeScript Type Checks
 
@@ -85,33 +165,29 @@ npm run format
 
 ### ESLint
 
-* Install ESLint and initialize it with the recommended config:
+* Manually install ESLint and initialize it with the recommended config:
 
 ```bash
-npm init @eslint/config@latest
-```
+npm install --save-dev eslint@latest @eslint/js@latest
 
-* Install recommended plugins:
-
-```bash
-npm install --save-dev @typescript-eslint/parser @typescript-eslint/eslint-plugin typescript-eslint eslint-config-next eslint-plugin-react eslint-plugin-unicorn eslint-plugin-import eslint-plugin-playwright eslint-config-prettier eslint-plugin-prettier eslint-plugin-simple-import-sort
 ```
 
 * Update `eslint.config.mjs`:
 
 ```js
 // eslint.config.mjs
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import tseslint from 'typescript-eslint';
 
 export default [
   {
-    files: ["**/*.{js,mjs,cjs,ts}"],
+    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     languageOptions: {
       globals: {
         ...globals.browser,
         ...globals.node,
+        React: 'readonly',
       },
     },
   },
@@ -119,18 +195,24 @@ export default [
   ...tseslint.configs.recommended,
   {
     rules: {
-      "no-unused-vars": "warn",
-      "no-console": "warn",
-      "no-undef": "warn",
+      'no-unused-vars': 'warn',
+      'no-console': 'warn',
+      'no-undef': 'warn',
     },
   },
 ];
 ```
 
-* Add to `package.json`:
+* I* Add to `package.json`:
 
 ```json
 "lint:fix": "next lint --fix"
+```
+
+* Install recommended plugins:
+
+```bash
+npm install --save-dev @typescript-eslint/parser @typescript-eslint/eslint-plugin typescript-eslint eslint-config-next eslint-plugin-react eslint-plugin-unicorn eslint-plugin-import eslint-plugin-playwright eslint-config-prettier eslint-plugin-prettier eslint-plugin-simple-import-sort
 ```
 
 * Run:
@@ -230,13 +312,31 @@ src/                      # Source code
 npm install -D vitest
 ```
 
+* Update `vitest.config.ts`:
+
+```ts
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vitest/config';
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+export default defineConfig({
+  plugins: [react(), tsconfigPaths()],
+  test: {
+    environment: 'happy-dom',
+    globals: true,
+    setupFiles: './src/tests/setup-test-environment.ts',
+    exclude: ['node_modules', 'dist', '.next', 'tests/e2e/**'],
+  },
+});
+```
+
 * Add to `package.json`:
 
 ```json
 "test": "vitest --reporter=verbose"
 ```
 
-* Create `src/test/unit/example.test.ts`:
+* Create `src/tests/unit/example.test.ts`:
 
 ```ts
 import { describe, expect, test } from 'vitest';
@@ -257,20 +357,7 @@ npm install --save-dev @testing-library/react @testing-library/dom @testing-libr
 
 * Create `vitest.config.ts` and `src/tests/setup-test-environment.ts` as per [React Testing Library + Vitest setup](https://janhesters.com/blog/how-to-set-up-nextjs-15-for-production-in-2025).
 
-## 8. Styling
-
-### Tailwind CSS
-
-* Already included if you selected it during setup.
-
-### Shadcn UI
-
-```bash
-npx shadcn@latest init
-npx shadcn@latest add card
-```
-
-## 9. End-to-End Testing (Playwright)
+## 8. End-to-End Testing (Playwright)
 
 * Install Playwright
 
@@ -285,7 +372,7 @@ npm init playwright@latest
 "test:e2e:ui": "npx playwright test --ui"
 ```
 
-* Create a `tests/e2e/example.spec.ts` file.
+* Create a `src/tests/e2e/example.spec.ts` file.
 
 ```ts
 import { test, expect } from '@playwright/test';
@@ -296,10 +383,36 @@ test('example', async ({ page }) => {
 });
 ```
 
+* Install Playwright new browser
+
+```bash
+npx playwright install 
+```
+
 * Run the tests
 
 ```bash
 npm run test:e2e
+```
+
+## 9. Styling
+
+### Tailwind CSS
+
+* Already included if you selected it during setup.
+
+### Shadcn UI
+
+* Install Shadcn UI:
+
+```bash
+echo "Y" | npx shadcn@latest init --defaults
+```
+
+* Add a card component:
+
+```bash
+npx shadcn@latest add card
 ```
 
 ## 10. Continuous Integration (GitHub Actions)
