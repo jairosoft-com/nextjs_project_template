@@ -8,27 +8,31 @@ You are a senior fronted developer in Next.js expert.
 
 ## 1. Initialize Your Project
 
-```bash
-npx create-next-app@latest
-```
-
-* Accept all prompts: **TypeScript**, **ESLint**, **Tailwind CSS**, **src/** directory, **App Router** (recommended).
+* Accept all prompts: **TypeScript**, **ESLint**, **Tailwind CSS**, **src/** directory, **App Router**.
+* Use Turbopack for `next dev`
 
 ```bash
-cd <your-project-name>
+echo "Y" | npx create-next-app@latest \<your-project-name\> --typescript --eslint --tailwind --src-dir
+      --app --import-alias "@/*"
 ```
-
-## 2. Run the Development Server
 
 ```bash
-npm run dev
+cd \<your-project-name\>
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to verify your app is running.
+## 2. Initialize Git and create a GitIgnore file
+
+* Initialize Git:
+
+```bash
+git init
+```
+
+* Create a `.gitignore` file targetted for Next.js, React, Javascript project.
 
 ## 3. TypeScript Type Checks
 
-Add a type-check script to your `package.json`:
+* Add a type-check script to your `package.json`:
 
 ```json
 "type-check": "tsc -b"
@@ -38,13 +42,13 @@ Add a type-check script to your `package.json`:
 
 ### Prettier
 
-Install Prettier and its Tailwind plugin:
+* Install Prettier and its Tailwind plugin:
 
 ```bash
 npm install --save-dev prettier prettier-plugin-tailwindcss
 ```
 
-Create `prettier.config.js`:
+* Create `prettier.config.js`:
 
 ```js
 module.exports = {
@@ -67,13 +71,13 @@ module.exports = {
 };
 ```
 
-Add to `package.json`:
+* Add to `package.json`:
 
 ```json
 "format": "prettier --write ."
 ```
 
-Run:
+* Run:
 
 ```bash
 npm run format
@@ -81,54 +85,55 @@ npm run format
 
 ### ESLint
 
-Install recommended plugins:
+* Install ESLint and initialize it with the recommended config:
 
 ```bash
-npm install --save-dev @eslint/eslintrc @typescript-eslint/parser @typescript-eslint/eslint-plugin typescript-eslint eslint-config-next eslint-plugin-react eslint-plugin-unicorn eslint-plugin-import eslint-plugin-playwright eslint-config-prettier eslint-plugin-prettier eslint-plugin-simple-import-sort
+npm init @eslint/config@latest
 ```
 
-Update `.eslintrc.json`:
+* Install recommended plugins:
 
-```json
-{
-  "extends": [
-    "next/core-web-vitals",
-    "plugin:unicorn/recommended",
-    "plugin:import/recommended",
-    "plugin:playwright/recommended",
-    "plugin:prettier/recommended"
-  ],
-  "plugins": ["simple-import-sort"],
-  "rules": {
-    "simple-import-sort/exports": "error",
-    "simple-import-sort/imports": "error",
-    "unicorn/no-array-callback-reference": "off",
-    "unicorn/no-array-for-each": "off",
-    "unicorn/no-array-reduce": "off",
-    "unicorn/prevent-abbreviations": [
-      "error",
-      {
-        "allowList": { "e2e": true },
-        "replacements": { "props": false, "ref": false, "params": false }
-      }
-    ]
+```bash
+npm install --save-dev @typescript-eslint/parser @typescript-eslint/eslint-plugin typescript-eslint eslint-config-next eslint-plugin-react eslint-plugin-unicorn eslint-plugin-import eslint-plugin-playwright eslint-config-prettier eslint-plugin-prettier eslint-plugin-simple-import-sort
+```
+
+* Update `eslint.config.mjs`:
+
+```js
+// eslint.config.mjs
+import globals from "globals";
+import pluginJs from "@eslint/js";
+import tseslint from "typescript-eslint";
+
+export default [
+  {
+    files: ["**/*.{js,mjs,cjs,ts}"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
   },
-  "overrides": [
-    {
-      "files": ["*.js"],
-      "rules": { "unicorn/prefer-module": "off" }
-    }
-  ]
-}
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  {
+    rules: {
+      "no-unused-vars": "warn",
+      "no-console": "warn",
+      "no-undef": "warn",
+    },
+  },
+];
 ```
 
-Add to `package.json`:
+* Add to `package.json`:
 
 ```json
 "lint:fix": "next lint --fix"
 ```
 
-Run:
+* Run:
 
 ```bash
 npm run lint:fix
@@ -136,27 +141,27 @@ npm run lint:fix
 
 ## 5. Commitlint & Husky (Conventional Commits)
 
-Install:
+* Install:
 
 ```bash
 npm install --save-dev @commitlint/cli@latest @commitlint/config-conventional@latest husky@latest
 npx husky-init && npm install
 ```
 
-Add hooks:
+* Add hooks:
 
 ```bash
 npx husky add .husky/pre-commit 'npm run lint && npm run type-check'
 npx husky add .husky/prepare-commit-msg 'exec < /dev/tty && npx cz --hook || true'
 ```
 
-Install Commitizen:
+* Install Commitizen:
 
 ```bash
 npm install --save-dev commitizen cz-conventional-changelog
 ```
 
-Add to `package.json`:
+* Add to `package.json`:
 
 ```json
 "config": {
@@ -164,7 +169,7 @@ Add to `package.json`:
 }
 ```
 
-Create `commitlint.config.cjs`:
+* Create `commitlint.config.cjs`:
 
 ```js
 const config = {
@@ -219,19 +224,19 @@ src/                      # Source code
 
 ### Vitest (Unit/Integration)
 
-Install:
+* Install:
 
 ```bash
 npm install -D vitest
 ```
 
-Add to `package.json`:
+* Add to `package.json`:
 
 ```json
 "test": "vitest --reporter=verbose"
 ```
 
-Create `src/test/unit/example.test.ts`:
+* Create `src/test/unit/example.test.ts`:
 
 ```ts
 import { describe, expect, test } from 'vitest';
@@ -244,19 +249,19 @@ describe('example', () => {
 
 ### React Testing Library
 
-Install:
+* Install:
 
 ```bash
 npm install --save-dev @testing-library/react @testing-library/dom @testing-library/jest-dom @testing-library/user-event @types/react @types/react-dom happy-dom @vitejs/plugin-react vite-tsconfig-paths
 ```
 
-Create `vitest.config.ts` and `src/tests/setup-test-environment.ts` as per [React Testing Library + Vitest setup](https://janhesters.com/blog/how-to-set-up-nextjs-15-for-production-in-2025).
+* Create `vitest.config.ts` and `src/tests/setup-test-environment.ts` as per [React Testing Library + Vitest setup](https://janhesters.com/blog/how-to-set-up-nextjs-15-for-production-in-2025).
 
 ## 8. Styling
 
 ### Tailwind CSS
 
-Already included if you selected it during setup.
+* Already included if you selected it during setup.
 
 ### Shadcn UI
 
@@ -265,75 +270,67 @@ npx shadcn@latest init
 npx shadcn@latest add card
 ```
 
-## 9. Internationalization (i18n)
+## 9. End-to-End Testing (Playwright)
 
-Install:
-
-```bash
-npm install negotiator @formatjs/intl-localematcher
-npm install --save-dev @types/negotiator
-```
-
-Set up i18n config and middleware as described in [this guide](https://janhesters.com/blog/how-to-set-up-nextjs-15-for-production-in-2025#internationalization).
-
-## 10. Database (Postgres + Prisma)
-
-Install:
-
-```bash
-npm install prisma --save-dev
-npm install @prisma/client
-npx prisma init
-```
-
-Edit `prisma/schema.prisma` and `.env.local` for your DB connection.
-Add helper scripts to `package.json`:
-
-```json
-"prisma:deploy": "npx prisma migrate deploy && npx prisma generate",
-"prisma:migrate": "npx prisma migrate dev --name",
-"prisma:push": "npx prisma db push && npx prisma generate",
-"prisma:reset-dev": "run-s prisma:wipe prisma:seed dev",
-"prisma:seed": "tsx ./prisma/seed.ts",
-"prisma:setup": "prisma generate && prisma migrate deploy && prisma db push",
-"prisma:studio": "npx prisma studio",
-"prisma:wipe": "npx prisma migrate reset --force && npx prisma db push"
-```
-
-Install supporting tools:
-
-```bash
-npm install --save-dev npm-run-all tsx dotenv
-```
-
-## 11. End-to-End Testing (Playwright)
+* Install Playwright
 
 ```bash
 npm init playwright@latest
 ```
 
-Add to `package.json`:
+* Add to `package.json`:
 
 ```json
 "test:e2e": "npx playwright test",
 "test:e2e:ui": "npx playwright test --ui"
 ```
 
-## 12. Continuous Integration (GitHub Actions)
+* Create a `tests/e2e/example.spec.ts` file.
 
-Create `.github/workflows/pull-request.yml` for CI with lint, type-check, unit/integration/E2E tests, and DB setup. See [example config](https://janhesters.com/blog/how-to-set-up-nextjs-15-for-production-in-2025#github-actions).
+```ts
+import { test, expect } from '@playwright/test';
+
+test('example', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await expect(page.getByText('Get started by editing')).toBeVisible();
+});
+```
+
+* Run the tests
+
+```bash
+npm run test:e2e
+```
+
+## 10. Continuous Integration (GitHub Actions)
+
+* Create `.github/workflows/pull-request.yml` for CI with lint, type-check, unit/integration/E2E tests, and DB setup. See [example config](https://janhesters.com/blog/how-to-set-up-nextjs-15-for-production-in-2025#github-actions).
+
+## 11. Run all quality checks
+
+* Run all quality checks including linting, type-checking, formatting, unit tests, and E2E tests.
+
+```bash
+npm run lint:fix && npm run type-check && npm run format && npm test
+```
+
+## 12. Run the Development Server
+
+* Start the development server using Turbopack.
+
+```bash
+npm run dev
+```
+
+* Visit [http://localhost:3000](http://localhost:3000) to verify your app is running.
+
+```bash
+curl http://localhost:3000
+```
 
 ## 13. Deployment
 
 * Deploy to [Vercel](https://vercel.com/) for best Next.js support.
-
-## 14. GitIgnore file
-
-* Create a .gitignore file targetted for Next.js, React, Javascript project.
-
-## 15. Final Instructions
-
-* No do not initialize git on the new folder
 
 ## References
 
