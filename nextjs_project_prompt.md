@@ -172,6 +172,12 @@ npm install --save-dev eslint@latest @eslint/js@latest
 
 ```
 
+* Install recommended plugins:
+
+```bash
+npm install --save-dev @eslint/eslintrc @typescript-eslint/parser @typescript-eslint/eslint-plugin typescript-eslint eslint-config-next eslint-plugin-react eslint-plugin-unicorn eslint-plugin-import eslint-plugin-playwright eslint-config-prettier eslint-plugin-prettier eslint-plugin-simple-import-sort
+```
+
 * Update `eslint.config.mjs`:
 
 ```js
@@ -207,12 +213,6 @@ export default [
 
 ```json
 "lint:fix": "next lint --fix"
-```
-
-* Install recommended plugins:
-
-```bash
-npm install --save-dev @typescript-eslint/parser @typescript-eslint/eslint-plugin typescript-eslint eslint-config-next eslint-plugin-react eslint-plugin-unicorn eslint-plugin-import eslint-plugin-playwright eslint-config-prettier eslint-plugin-prettier eslint-plugin-simple-import-sort
 ```
 
 * Run:
@@ -325,7 +325,7 @@ export default defineConfig({
     environment: 'happy-dom',
     globals: true,
     setupFiles: './src/tests/setup-test-environment.ts',
-    exclude: ['node_modules', 'dist', '.next', 'tests/e2e/**'],
+    exclude: ['node_modules', 'dist', '.next', './src/tests/e2e/**'],
   },
 });
 ```
@@ -399,14 +399,24 @@ npm run test:e2e
 
 ### Tailwind CSS
 
-* Already included if you selected it during setup.
+* Install Tailwind CSS, postcss, and autoprefixer:
+
+```bash
+npm install -D tailwindcss postcss autoprefixer
+```
+
+* Initialize Tailwind CSS:
+
+```bash
+npx tailwindcss init -p
+```
 
 ### Shadcn UI
 
 * Install Shadcn UI:
 
 ```bash
-echo "Y" | npx shadcn@latest init --defaults
+npx shadcn@latest init --defaults
 ```
 
 * Add a card component:
