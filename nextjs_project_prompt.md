@@ -610,7 +610,7 @@ test('example', async ({ page }) => {
 });
 ```
 
-* Install Playwright new browser
+* Install Playwright Browser
 
 ```bash
 npx playwright install 
